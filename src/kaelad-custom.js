@@ -2,7 +2,13 @@ Hooks.once("init", () => {
   log("initializing...");
 
   Hooks.on("updateActor", wounded);
+
+  preventPlayerIdentifying();
 });
+
+/**
+ * Wounded indicators
+ */
 
 async function wounded(actor, update, options, userId) {
   // only run hook on the user that updated the actor
@@ -43,6 +49,31 @@ async function toggleEffect(actor, effectId, active, overlay = false) {
     if (overlay) effectData["flags.core.overlay"] = true;
     return ActiveEffect.implementation.create(effectData, { parent: actor, keepId: true });
   }
+}
+
+/**
+ * Fixes
+ */
+
+function preventPlayerIdentifying() {
+  // Prevent players from updating
+  Hooks.on("preUpdateItem", (item, update) => {
+    if (!game.user.isGM && "identified" in (update.system ?? {})) return false;
+  });
+
+  // Remove Identify button at top of Item Sheet
+  Hooks.on("renderItemSheet", (sheet, [html]) => {
+    if (game.user.isGM || sheet.item.system.identified) return;
+    html
+      .querySelectorAll(".dnd5e.sheet.item .sheet-header .item-subtitle label:has(input:not([disabled]))")
+      .forEach((n) => n.remove());
+  });
+
+  // Remove Identify button from Item Context menu on Actor Sheet
+  Hooks.on("dnd5e.getItemContextOptions", (item, buttons) => {
+    if (game.user.isGM || item.system.identified) return;
+    buttons.findSplice((e) => e.name === "DND5E.Identify");
+  });
 }
 
 /**
