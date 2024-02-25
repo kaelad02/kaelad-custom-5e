@@ -45,9 +45,8 @@ async function toggleEffect(actor, effectId, active, overlay = false) {
   if (existing && !active) return existing.delete();
   else if (!existing && active) {
     const effect = await ActiveEffect.implementation.fromStatusEffect(effectId);
-    const effectData = effect.toObject();
-    if (overlay) effectData["flags.core.overlay"] = true;
-    return ActiveEffect.implementation.create(effectData, { parent: actor, keepId: true });
+    if (overlay) effect.updateSource({ "flags.core.overlay": true });
+    return ActiveEffect.implementation.create(effect, { parent: actor, keepId: true });
   }
 }
 
