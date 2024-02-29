@@ -51,7 +51,7 @@ async function toggleEffect(actor, effectId, active, overlay = false) {
 }
 
 /**
- * Fixes
+ * Fixes https://github.com/foundryvtt/dnd5e/issues/2781
  */
 
 function preventPlayerIdentifying() {
