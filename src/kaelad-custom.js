@@ -8,6 +8,10 @@ Hooks.once("init", () => {
   blindPlayerChecks();
 });
 
+Hooks.once("setup", async () => {
+  await userMacroFolders();
+});
+
 /**
  * Wounded indicators
  */
@@ -102,6 +106,40 @@ function blindPlayerChecks() {
   Hooks.on("dnd5e.preRollAbilitySave", hookFn);
   Hooks.on("dnd5e.preRollSkill", hookFn);
   Hooks.on("dnd5e.preRollToolCheck", hookFn);
+}
+
+/**
+ * User Macro Folders
+ */
+
+async function userMacroFolders() {
+  if (game.users.activeGM.isSelf) {
+    // create folders for each user
+    for (const user of game.users) {
+      if (!foundry.utils.hasProperty(user, "flags.kaelad-custom-5e.macroFolderId")) await _createMacroFolder(user);
+    }
+    // use Hook for new users
+    Hooks.on("createUser", async (user) => {
+      await _createMacroFolder(user);
+    });
+  }
+
+  Hooks.on("preCreateMacro", (macro, data) => {
+    if (!data.folder) {
+      const folder = foundry.utils.getProperty(game.user, "flags.kaelad-custom-5e.macroFolderId");
+      macro.updateSource({ folder });
+    }
+  });
+}
+
+async function _createMacroFolder(user) {
+  const folder = await Folder.implementation.create({
+    folder: null,
+    name: user.name,
+    sorting: "a",
+    type: "Macro",
+  });
+  await user.setFlag("kaelad-custom-5e", "macroFolderId", folder.id);
 }
 
 /**
