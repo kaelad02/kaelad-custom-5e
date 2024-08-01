@@ -64,10 +64,10 @@ function preventPlayerIdentifying() {
 
   // Remove Identify button at top of Item Sheet
   Hooks.on("renderItemSheet", (sheet, [html]) => {
-    if (game.user.isGM || sheet.item.system.identified) return;
-    html
-      .querySelectorAll(".dnd5e.sheet.item .sheet-header .item-subtitle label:has(input:not([disabled]))")
-      .forEach((n) => n.remove());
+    if (game.user.isGM || sheet.item.system.identified || !sheet.isEditable) return;
+    const label = html.querySelector(".dnd5e.sheet.item .sheet-header .item-subtitle .identified");
+    label.querySelector("input").disabled = true;
+    label.querySelector("i").remove();
   });
 
   // Remove Identify button from Item Context menu on Actor Sheet
