@@ -1,0 +1,8 @@
+/**
+ * Class Spell Buttons
+ */
+.dnd5e2.sheet.actor .spellcasting-card-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}

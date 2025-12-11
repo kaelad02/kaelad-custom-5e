@@ -25,5 +25,8 @@
   ],
   "esmodules": [
     "src/kaelad-custom.js"
+  ],
+  "styles": [
+    "css/kaelad-custom.css"
   ]
 }
