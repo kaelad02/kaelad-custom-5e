@@ -3,7 +3,6 @@
  */
 
 export function init() {
-  // register setting and get current value
   game.settings.register("kaelad-custom-5e", "blindPlayerChecks", {
     name: "Blind Player Checks",
     hint: "Force ability checks, saves, skills, and tool rolls by players to be blind rolls.",
@@ -11,13 +10,11 @@ export function init() {
     config: false,
     type: Boolean,
     default: false,
-    onChange: (value) => (_blindPlayerChecks = value),
   });
-  let _blindPlayerChecks = game.settings.get("kaelad-custom-5e", "blindPlayerChecks");
 
-  // register hooks for Ability, Skill, and Tool checks
   const hookFn = (config, dialog, message) => {
-    if (!game.user.isGM && _blindPlayerChecks) message.rollMode = CONST.DICE_ROLL_MODES.BLIND;
+    if (!game.user.isGM && game.settings.get("kaelad-custom-5e", "blindPlayerChecks"))
+      message.rollMode = CONST.DICE_ROLL_MODES.BLIND;
   };
   Hooks.on("dnd5e.preRollAbilityCheckV2", hookFn);
   Hooks.on("dnd5e.preRollAbilitySaveV2", hookFn);
