@@ -1,5 +1,5 @@
 import * as defeated from "./modules/defeated.js";
-import * as blindChecks from "./modules/blind-checks.js";
+import * as blindChecks from "./modules/blind-player-checks.js";
 
 Hooks.once("init", () => {
   log("initializing...");
