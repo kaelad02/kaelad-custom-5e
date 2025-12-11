@@ -1,18 +1,18 @@
 {
   "id": "kaelad-custom-5e",
   "title": "Kaelad's Kustomizations",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "compatibility": {
-    "minimum": "11",
-    "verified": "11"
+    "minimum": "13",
+    "verified": "13"
   },
   "relationships": {
     "systems": [
       {
         "id": "dnd5e",
         "compatibility": {
-          "minimum": "3.0.0",
-          "verified": "3.2.1"
+          "minimum": "5.0.0",
+          "verified": "5.0.4"
         }
       }
     ]
@@ -23,5 +23,7 @@
       "discord": "kaelad"
     }
   ],
-  "esmodules": ["src/kaelad-custom.js"]
+  "esmodules": [
+    "src/kaelad-custom.js"
+  ]
 }
