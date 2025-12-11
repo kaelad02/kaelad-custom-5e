@@ -13,3 +13,7 @@ There is a hidden setting that forces any ability check or save by players to be
 ```js
 game.modules.get("kaelad-custom-5e").api.toggle();
 ```
+
+## Auto Folder Macros
+
+When players create macros, automatically add them to a folder with their name on it to help keep the macros organized.

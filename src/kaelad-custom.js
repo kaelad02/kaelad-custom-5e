@@ -1,5 +1,6 @@
 import * as defeated from "./modules/defeated.js";
 import * as blindPlayerChecks from "./modules/blind-player-checks.js";
+import * as folderMacros from "./modules/folder-macros.js";
 
 Hooks.once("init", () => {
   log("initializing...");
@@ -8,6 +9,7 @@ Hooks.once("init", () => {
 
   defeated.init();
   blindPlayerChecks.init();
+  folderMacros.init();
 });
 
 /**
