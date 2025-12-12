@@ -3,6 +3,7 @@ import * as blindPlayerChecks from "./modules/blind-player-checks.js";
 import * as folderMacros from "./modules/folder-macros.js";
 import * as classSpellButtons from "./modules/class-spell-buttons.js";
 import * as masteries from "./modules/masteries.js";
+import * as optionalBonuses from "./modules/optional-bonuses.js";
 
 Hooks.once("init", () => {
   log("initializing...");
@@ -14,6 +15,7 @@ Hooks.once("init", () => {
   folderMacros.init();
   classSpellButtons.init();
   //masteries.init();
+  optionalBonuses.init();
 });
 
 /**
