@@ -5,6 +5,7 @@ export function init() {
     // Graze
     if (chatMessage.flags.dnd5e.roll?.mastery === "graze") {
       if (!chatMessage.speakerActor?.isOwner) return;
+      // TODO use the D20Roll's isFailure function instead of checking manually
       const attackRoll = chatMessage.rolls[0];
       const ac = chatMessage.flags.dnd5e.targets?.[0]?.ac;
       if (!attackRoll || !ac) return;
