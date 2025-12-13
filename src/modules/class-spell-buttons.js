@@ -1,6 +1,8 @@
 export function init() {
   Hooks.on("renderCharacterActorSheet", (app, html, context) => {
+    if (!game.settings.get("kaelad-custom-5e", "classSpellButtons")) return;
     if (!context.editable) return;
+
     const actor = app.actor;
     const spellcastingCards = html.querySelectorAll(".spellcasting.card");
     const allClasses = [...Object.values(actor.classes), ...Object.values(actor.subclasses)];

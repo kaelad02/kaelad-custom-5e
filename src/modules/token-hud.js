@@ -1,5 +1,7 @@
 export function init() {
   Hooks.on("renderTokenHUD", (app, html) => {
+    if (!game.settings.get("kaelad-custom-5e", "tokenHud")) return;
+
     // add CSS class
     const statusEffects = html.querySelector(".status-effects");
     statusEffects.classList.toggle("two-columns", true);
@@ -26,11 +28,11 @@ export function init() {
 
       element.replaceWith(container);
     });
-
-    // add copy of listener that the dnd5e system has in ActiveEffect5e#onClickTokenHUD
-    statusEffects.addEventListener("click", onClickTokenHUD, {capture: true});
-    statusEffects.addEventListener("contextmenu", onClickTokenHUD, {capture: true});
   });
+
+  // add copy of listener that the dnd5e system has in ActiveEffect5e#onClickTokenHUD
+  document.addEventListener("click", onClickTokenHUD, {capture: true});
+  document.addEventListener("contextmenu", onClickTokenHUD, {capture: true});
 }
 
 function onClickTokenHUD(event) {

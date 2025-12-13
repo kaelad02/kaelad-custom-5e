@@ -7,7 +7,7 @@ import * as optionalBonuses from "./modules/optional-bonuses.js";
 import * as tokenHud from "./modules/token-hud.js";
 
 Hooks.once("init", () => {
-  log("Kaelad's Kustomizations initializing...");
+  console.log("Kaelad's Kustomizations initializing...");
 
   game.modules.get("kaelad-custom-5e").api = {};
 
@@ -42,7 +42,7 @@ Hooks.once("init", () => {
         hint: "Add a button below the classes in the Spells tab to open the Compendium Browser, pre-filtered for that class and level.",
         scope: "client",
         config: true,
-        requiresReload: true,
+        requiresReload: false,
         type: Boolean,
         default: false,
       },
@@ -66,7 +66,7 @@ Hooks.once("init", () => {
         hint: "Show the names of status effects in the Token HUD.",
         scope: "client",
         config: true,
-        requiresReload: true,
+        requiresReload: false,
         type: Boolean,
         default: false,
       },
