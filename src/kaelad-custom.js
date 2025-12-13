@@ -4,6 +4,7 @@ import * as folderMacros from "./modules/folder-macros.js";
 import * as classSpellButtons from "./modules/class-spell-buttons.js";
 import * as masteries from "./modules/masteries.js";
 import * as optionalBonuses from "./modules/optional-bonuses.js";
+import * as tokenHud from "./modules/token-hud.js";
 
 Hooks.once("init", () => {
   log("initializing...");
@@ -16,6 +17,7 @@ Hooks.once("init", () => {
   classSpellButtons.init();
   //masteries.init();
   optionalBonuses.init();
+  tokenHud.init();
 });
 
 /**

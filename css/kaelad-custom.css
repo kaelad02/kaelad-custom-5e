@@ -14,3 +14,20 @@
 .dnd5e2.standard-form .optional-bonuses .form-group:not(.label-top) > .form-fields {
   flex: 1;
 }
+
+/**
+ * Token HUD
+ */
+#token-hud .status-effects.two-columns {
+  /*--effect-size: 28px;*/
+  grid-template-columns: repeat(2, 120px);
+
+  .effect-control {
+    display: flex;
+    width: auto;
+  }
+
+  p {
+    margin-left: 5px;
+  }
+}
