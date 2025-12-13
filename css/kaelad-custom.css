@@ -6,3 +6,11 @@
   flex-direction: column;
   gap: 0.25rem;
 }
+
+/**
+ * Optional Bonuses
+ */
+.dnd5e2 .standard-form .optional-bonuses .form-group:not(.label-top) > .form-fields,
+.dnd5e2.standard-form .optional-bonuses .form-group:not(.label-top) > .form-fields {
+  flex: 1;
+}

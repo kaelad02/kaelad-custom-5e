@@ -22,57 +22,58 @@ export function init() {
     const item = activity?.item;
     const actor = item?.actor;
     if (!actor) return;
-    const configFieldset = elements.querySelector("fieldset");
-    if (configFieldset.querySelector(".michael-inject")) return;
+    if (elements.querySelector(".optional-bonuses")) return;
 
-    let toInject = "";
+    const getIdentifier = (identifier) => actor.items.find(i => i.system.identifier === identifier);
+    const fields = [];
+
     // Sneak Attack
-    const sneakAttack = actor.items.getName("Sneak Attack");
+    const sneakAttack = getIdentifier("sneak-attack");
     if (sneakAttack) {
       const ranged = activity.actionType === "rwak" || app.config.attackMode?.includes("thrown");
       const finesse = item.system.properties.has("fin");
-      if ((ranged || finesse) && (sneakAttack.system.uses.max == 0 || sneakAttack.system.uses.value > 0)) {
-        const checkbox = dnd5e.applications.fields.createCheckboxInput(null, {name: "sneakAttack"});
-        toInject += `<div class="form-fields"><label>Sneak Attack</label>${checkbox.outerHTML}</div>`;
-      }
+      if (ranged || finesse)
+        fields.push(
+          new foundry.data.fields.BooleanField({label: sneakAttack.name}, {name: "sneakAttack"})
+        );
     }
 
     // Dreadful Strikes
-    const dreadfulStrikes = actor.items.getName("Dreadful Strikes");
-    if (dreadfulStrikes) {
-      if (item.type === "weapon") {
-        if (dreadfulStrikes.system.uses.max == 0 || dreadfulStrikes.system.uses.value > 0) {
-          const checkbox = dnd5e.applications.fields.createCheckboxInput(null, {name: "dreadfulStrikes"});
-          toInject += `<div class="form-fields"><label>Dreadful Strikes</label>${checkbox.outerHTML}</div>`;
-        }
-      }
-    }
+    const dreadfulStrikes = getIdentifier("dreadful-strikes");
+    if (dreadfulStrikes && item.type === "weapon")
+      fields.push(
+        new foundry.data.fields.BooleanField({label: dreadfulStrikes.name}, {name: "dreadfulStrikes"})
+      );
 
     // Savage Attacker
-    const savageAttacker = actor.items.getName("Savage Attacker");
-    if (savageAttacker) {
-      if (item.type === "weapon") {
-        if (savageAttacker.system.uses.max == 0 || savageAttacker.system.uses.value > 0) {
-          const checkbox = dnd5e.applications.fields.createCheckboxInput(null, {name: "savageAttacker"});
-          toInject += `<div class="form-fields"><label>Savage Attacker</label>${checkbox.outerHTML}</div>`;
-        }
-      }
-    }
+    const savageAttacker = getIdentifier("savage-attacker");
+    if (savageAttacker && item.type === "weapon")
+      fields.push(
+        new foundry.data.fields.BooleanField({label: savageAttacker.name}, {name: "savageAttacker"})
+      );
 
     // Blessed Strikes: Divine Strike
-    const blessedStrikes = actor.items.getName("Blessed Strikes: Divine Strike");
-    if (blessedStrikes) {
-      if (item.type === "weapon") {
-        if (blessedStrikes.system.uses.max == 0 || blessedStrikes.system.uses.value > 0) {
-          const checkboxRadiant = dnd5e.applications.fields.createCheckboxInput(null, {name: "blessedStrikesRadiant"});
-          const checkboxNecrotic = dnd5e.applications.fields.createCheckboxInput(null, {name: "blessedStrikesNecrotic"});
-          toInject += `<div class="form-fields"><label>Blessed Strikes (Radiant)</label>${checkboxRadiant.outerHTML}</div>`;
-          toInject += `<div class="form-fields"><label>Blessed Strikes (Necrotic)</label>${checkboxNecrotic.outerHTML}</div>`;
-        }
-      }
-    }
+    const blessedStrikes = getIdentifier("blessed-strikes-divine-strike");
+    if (blessedStrikes && item.type === "weapon")
+      fields.push(
+        new foundry.data.fields.BooleanField({label: "Blessed Strikes (Radiant)"}, {name: "blessedStrikesRadiant"}),
+        new foundry.data.fields.BooleanField({label: "Blessed Strikes (Necrotic)"}, {name: "blessedStrikesNecrotic"})
+      );
 
-    if (toInject.length) configFieldset.insertAdjacentHTML("afterbegin", `<div class="form-group michael-inject">${toInject}</div>`);
+    // add new fieldset for the optional bonuses
+    if (fields.length) {
+      // make new fieldset to hold these
+      const newFieldset = document.createElement("fieldset");
+      newFieldset.className = "optional-bonuses";
+      const legend = document.createElement("legend");
+      legend.innerText = "Optional Bonuses";
+      newFieldset.append(legend);
+      // add fields
+      fields.forEach(field => newFieldset.append(field.toFormGroup()));
+      // add the new fieldset right before the existing fieldset
+      const configFieldset = elements.querySelector('fieldset[data-application-part="configuration"]');
+      configFieldset.before(newFieldset);
+    }
   });
 }
 
