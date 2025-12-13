@@ -7,34 +7,78 @@ import * as optionalBonuses from "./modules/optional-bonuses.js";
 import * as tokenHud from "./modules/token-hud.js";
 
 Hooks.once("init", () => {
-  log("initializing...");
+  log("Kaelad's Kustomizations initializing...");
 
   game.modules.get("kaelad-custom-5e").api = {};
 
-  defeated.init();
+  const settings = {
+    defeated: {
+      config: {
+        name: "Automatically Mark Defeated",
+        hint: "When an actor drops to 0 HP, toggle the Dead or Unconscious status depending on whether they make death saves or not.",
+        scope: "world",
+        config: true,
+        requiresReload: true,
+        type: Boolean,
+        default: false,
+      },
+      initClass: defeated
+    },
+    folderMacros: {
+      config: {
+        name: "Player Macro Folders",
+        hint: "When players create macros, automatically add them to a folder with their name on it to help keep the macros organized.",
+        scope: "world",
+        config: true,
+        requiresReload: true,
+        type: Boolean,
+        default: false,
+      },
+      initClass: folderMacros
+    },
+    classSpellButtons: {
+      config: {
+        name: "Class Spell Buttons",
+        hint: "Add a button below the classes in the Spells tab to open the Compendium Browser, pre-filtered for that class and level.",
+        scope: "client",
+        config: true,
+        requiresReload: true,
+        type: Boolean,
+        default: false,
+      },
+      initClass: classSpellButtons
+    },
+    optionalBonuses: {
+      config: {
+        name: "Optional Bonuses",
+        hint: "Add checkboxes to the roll config dialogs for optional bonuses (e.g. Sneak Attack and Savage Attacker).",
+        scope: "world",
+        config: true,
+        requiresReload: true,
+        type: Boolean,
+        default: false,
+      },
+      initClass: optionalBonuses
+    },
+    tokenHud: {
+      config: {
+        name: "Customize Token HUD",
+        hint: "Show the names of status effects in the Token HUD.",
+        scope: "client",
+        config: true,
+        requiresReload: true,
+        type: Boolean,
+        default: false,
+      },
+      initClass: tokenHud
+    }
+  };
+
+  for (const [key, setting] of Object.entries(settings)) {
+    game.settings.register("kaelad-custom-5e", key, setting.config);
+    if (game.settings.get("kaelad-custom-5e", key)) setting.initClass.init();
+  }
+
+  // initialize this one separately since it's setting doesn't control the init function
   blindPlayerChecks.init();
-  folderMacros.init();
-  classSpellButtons.init();
-  //masteries.init();
-  optionalBonuses.init();
-  tokenHud.init();
 });
-
-/**
- * Utility functions
- */
-
-function debugEnabled() {
-  // TODO
-  return true;
-}
-
-function debug(...args) {
-  try {
-    if (debugEnabled()) log(...args);
-  } catch (e) {}
-}
-
-function log(...args) {
-  console.log("Kaelad's Kustomizations |", ...args);
-}
