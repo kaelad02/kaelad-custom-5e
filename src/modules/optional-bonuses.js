@@ -5,6 +5,7 @@
 export function init() {
   // monkeypatch to make criticals support dice pools (e.g. {2d6, 2d6}kh)
   dnd5e.dice.DamageRoll.prototype.configureDamage = funNewConfigureDamage;
+  // TODO remove when system version updated to 5.2.0
   dnd5e.documents.ChatMessage5e.prototype._simplifyDamageRoll = newSimplifyDamageRoll;
 
   Hooks.on("dnd5e.buildDamageRollConfig", (dialog, rollConfig, formData, rollIndex) => {
@@ -159,44 +160,51 @@ function funNewConfigureDamage({critical = {}} = {}) {
   this.options.configured = true;
 }
 
+/*
+ * Copied from version 5.2.0 of the system
+ */
 function newSimplifyDamageRoll(roll) {
-  const aggregate = { type: roll.options.type, total: Math.max(0, roll.total), constant: 0, dice: [] };
+  const { OperatorTerm, NumericTerm, DiceTerm, PoolTerm } = foundry.dice.terms;
+  const termResultClasses = ["success", "failure", "rerolled", "exploded", "discarded"];
+  const aggregate = {
+    type: roll.options.type, total: Math.max(0, roll.total), constant: 0, dice: [], icon: null, method: null
+  };
   let hasMultiplication = false;
   for ( let i = roll.terms.length - 1; i >= 0; ) {
     const term = roll.terms[i--];
-    if ( !(term instanceof foundry.dice.terms.NumericTerm) && !(term instanceof foundry.dice.terms.DiceTerm) && !(term instanceof foundry.dice.terms.PoolTerm) ) {
+    if ( !(term instanceof NumericTerm) && !(term instanceof DiceTerm) && !(term instanceof PoolTerm) ) {
       continue;
     }
     const value = term.total;
-    if ( term instanceof foundry.dice.terms.DiceTerm ) aggregate.dice.push(...term.results.map(r => ({
-      result: term.getResultLabel(r), classes: term.getResultCSS(r).filterJoin(" ")
-    })));
-    // NEW
-    if ( term instanceof foundry.dice.terms.PoolTerm) {
-      //if ( !term.modifiers.contains("kh")) continue;
-      const getResultCSS = (result, roll) => {
-        const dice = [];
-        for ( let i = roll.terms.length - 1; i >= 0; ) {
-          const term = roll.terms[i--];
-          if ( term instanceof foundry.dice.terms.DiceTerm ) dice.push(...term.results.map(r => ({
-            result: term.getResultLabel(r), classes: term.getResultCSS(r)
-          })));
-        }
-        if ( result.discarded ) dice.forEach(d => d.classes.push("discarded"))
-        dice.forEach(d => d.classes = d.classes.filterJoin(" "))
-        return dice;
-      };
-      aggregate.dice.push(...term.results.flatMap((r, index) => getResultCSS(r, term.rolls[index])));
+    if ( term instanceof DiceTerm ) {
+      const tooltipData = term.getTooltipData();
+      aggregate.dice.push(...tooltipData.rolls);
+      aggregate.icon ??= tooltipData.icon;
+      aggregate.method ??= tooltipData.method;
     }
-    // END NEW
+    if ( term instanceof PoolTerm ) {
+      term.rolls.forEach((poolTermRoll, i) => {
+        // Get simplified data for each roll
+        const simplified = this._simplifyDamageRoll(poolTermRoll);
+        const result = term.results[i];
+        // Apply main result classes to individual dice
+        simplified.dice.forEach(die => {
+          const resultClasses = termResultClasses.filter(c => result[c]).join(" ");
+          if ( resultClasses.length ) die.classes += ` ${resultClasses}`;
+        });
+        aggregate.dice.push(...simplified.dice);
+        aggregate.icon ??= simplified.icon;
+        aggregate.method ??= simplified.method;
+      });
+    }
     let multiplier = 1;
     let operator = roll.terms[i];
-    while ( operator instanceof foundry.dice.terms.OperatorTerm ) {
+    while ( operator instanceof OperatorTerm ) {
       if ( !["+", "-"].includes(operator.operator) ) hasMultiplication = true;
       if ( operator.operator === "-" ) multiplier *= -1;
       operator = roll.terms[--i];
     }
-    if ( term instanceof foundry.dice.terms.NumericTerm ) aggregate.constant += value * multiplier;
+    if ( term instanceof NumericTerm ) aggregate.constant += value * multiplier;
   }
   if ( hasMultiplication ) aggregate.constant = null;
   return aggregate;
