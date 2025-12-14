@@ -13,7 +13,7 @@ export function init() {
   });
 
   // add function to toggle setting
-  game.modules.get("kaelad-custom-5e").api.toggle = async () => {
+  game.modules.get("kaelad-custom-5e").api.toggleBps = async () => {
     const blind = !game.settings.get("kaelad-custom-5e", "blindPlayerChecks");
     await game.settings.set("kaelad-custom-5e", "blindPlayerChecks", blind);
     if (blind) ui.notifications.warn("Player checks are now blind");

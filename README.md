@@ -8,12 +8,28 @@ When an actor drops to 0 HP, toggle the Dead or Unconscious status depending on 
 
 ## Blind Player Checks
 
-There is a hidden setting that forces any ability check or save by players to be blind rolls. Useful if you want players to make a roll but not know the outcome. It's not exposed in the settings, but a macro can toggle it on/off.
+Force ability checks, saves, skills, and tool rolls by players to be blind rolls. Useful if you want players to make a roll but not know the outcome. It's not exposed in the settings, but a macro can toggle it on/off.
 
 ```js
-game.modules.get("kaelad-custom-5e").api.toggle();
+game.modules.get("kaelad-custom-5e").api.toggleBps();
 ```
 
-## Auto Folder Macros
+## Player Macro Folders
 
 When players create macros, automatically add them to a folder with their name on it to help keep the macros organized.
+
+## Class Spell Buttons
+
+Add a button below the classes in the Spells tab to open the Compendium Browser, pre-filtered for that class and level.
+
+_Note:_ This is a client setting that each player can enable for themselves.
+
+## Optional Bonuses
+
+Add checkboxes to the roll config dialogs for optional bonuses (e.g. Sneak Attack and Savage Attacker).
+
+## Customize Token HUD
+
+Show the names of status effects in the Token HUD.
+
+_Note:_ This is a client setting that each player can enable for themselves.
