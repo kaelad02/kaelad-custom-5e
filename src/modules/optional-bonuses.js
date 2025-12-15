@@ -63,19 +63,7 @@ export function init() {
       );
 
     // add new fieldset for the optional bonuses
-    if (fields.length) {
-      // make new fieldset to hold these
-      const newFieldset = document.createElement("fieldset");
-      newFieldset.className = "optional-bonuses";
-      const legend = document.createElement("legend");
-      legend.innerText = "Optional Bonuses";
-      newFieldset.append(legend);
-      // add fields
-      fields.forEach(field => newFieldset.append(field.toFormGroup()));
-      // add the new fieldset right before the existing fieldset
-      const configFieldset = elements.querySelector('fieldset[data-application-part="configuration"]');
-      configFieldset.before(newFieldset);
-    }
+    addFieldset(fields, elements);
   });
 
   Hooks.on("dnd5e.buildSkillRollConfig", (dialog, rollConfig, formData, rollIndex) => {
@@ -97,20 +85,24 @@ export function init() {
     if (app.config.skill) fields.push(new foundry.data.fields.BooleanField({label: "Guidance"}, {name: "guidance"}));
 
     // add new fieldset for the optional bonuses
-    if (fields.length) {
-      // make new fieldset to hold these
-      const newFieldset = document.createElement("fieldset");
-      newFieldset.className = "optional-bonuses";
-      const legend = document.createElement("legend");
-      legend.innerText = "Optional Bonuses";
-      newFieldset.append(legend);
-      // add fields
-      fields.forEach(field => newFieldset.append(field.toFormGroup()));
-      // add the new fieldset right before the existing fieldset
-      const configFieldset = elements.querySelector('fieldset[data-application-part="configuration"]');
-      configFieldset.before(newFieldset);
-    }
+    addFieldset(fields, elements);
   });
+}
+
+function addFieldset(fields, elements) {
+  if (fields.length) {
+    // make new fieldset to hold these
+    const newFieldset = document.createElement("fieldset");
+    newFieldset.className = "optional-bonuses";
+    const legend = document.createElement("legend");
+    legend.innerText = "Optional Bonuses";
+    newFieldset.append(legend);
+    // add fields
+    fields.forEach(field => newFieldset.append(field.toFormGroup()));
+    // add the new fieldset right before the existing fieldset
+    const configFieldset = elements.querySelector('fieldset[data-application-part="configuration"]');
+    configFieldset.before(newFieldset);
+  }
 }
 
 function funNewConfigureDamage({critical = {}} = {}) {
