@@ -1,124 +1,84 @@
+import * as defeated from "./modules/defeated.js";
+import * as blindPlayerChecks from "./modules/blind-player-checks.js";
+import * as folderMacros from "./modules/folder-macros.js";
+import * as classSpellButtons from "./modules/class-spell-buttons.js";
+import * as masteries from "./modules/masteries.js";
+import * as optionalBonuses from "./modules/optional-bonuses.js";
+import * as tokenHud from "./modules/token-hud.js";
+
 Hooks.once("init", () => {
-  log("initializing...");
+  console.log("Kaelad's Kustomizations initializing...");
 
-  Hooks.on("updateActor", wounded);
+  game.modules.get("kaelad-custom-5e").api = {};
 
-  preventPlayerIdentifying();
-
-  blindPlayerChecks();
-});
-
-/**
- * Wounded indicators
- */
-
-async function wounded(actor, update, options, userId) {
-  // only run hook on the user that updated the actor
-  if (userId !== game.user.id) return;
-
-  // only run hook if HP was changed (any of them)
-  if (getProperty(update, "system.attributes.hp") === undefined) return;
-
-  debug("actor HP updated, checking for wounded/dead states");
-  const hp = actor.system.attributes.hp;
-
-  // Bloodied
-  if (!actor.hasPlayerOwner) {
-    const isBloodied = 0 < hp.value && hp.value <= (hp.max + hp.tempmax) / 2;
-    await toggleEffect(actor, "bleeding", isBloodied);
-  }
-
-  if (actor.type === "character") {
-    // Unconscious
-    const isUnconscious = hp.value === 0;
-    await toggleEffect(actor, "unconscious", isUnconscious);
-  } else {
-    // Dead
-    const isDead = hp.value === 0;
-    await toggleEffect(actor, "dead", isDead, true);
-  }
-}
-
-async function toggleEffect(actor, effectId, active, overlay = false) {
-  debug("toggling effect", effectId, active);
-
-  // adapted from EffectsElement#_onToggleCondition
-  const existing = actor.effects.get(dnd5e.utils.staticID(`dnd5e${effectId}`));
-  if (existing && !active) return existing.delete();
-  else if (!existing && active) {
-    const effect = await ActiveEffect.implementation.fromStatusEffect(effectId);
-    if (overlay) effect.updateSource({ "flags.core.overlay": true });
-    return ActiveEffect.implementation.create(effect, { parent: actor, keepId: true });
-  }
-}
-
-/**
- * Fixes https://github.com/foundryvtt/dnd5e/issues/2781
- */
-
-function preventPlayerIdentifying() {
-  // Prevent players from updating
-  Hooks.on("preUpdateItem", (item, update) => {
-    if (!game.user.isGM && "identified" in (update.system ?? {})) return false;
-  });
-
-  // Remove Identify button at top of Item Sheet
-  Hooks.on("renderItemSheet", (sheet, [html]) => {
-    if (game.user.isGM || sheet.item.system.identified || !sheet.isEditable) return;
-    const label = html.querySelector(".dnd5e.sheet.item .sheet-header .item-subtitle .identified");
-    label.querySelector("input").disabled = true;
-    label.querySelector("i").remove();
-  });
-
-  // Remove Identify button from Item Context menu on Actor Sheet
-  Hooks.on("dnd5e.getItemContextOptions", (item, buttons) => {
-    if (game.user.isGM || item.system.identified) return;
-    buttons.findSplice((e) => e.name === "DND5E.Identify");
-  });
-}
-
-/**
- * Blind Player Checks
- */
-
-function blindPlayerChecks() {
-  // register setting and get current value
-  game.settings.register("kaelad-custom-5e", "blindPlayerChecks", {
-    name: "Blind Player Checks",
-    hint: "Force ability checks, saves, skills, and tool rolls by players to be blind rolls.",
-    scope: "world",
-    config: false,
-    type: Boolean,
-    default: false,
-    onchange: (value) => (_blindPlayerChecks = value),
-  });
-  let _blindPlayerChecks = game.settings.get("kaelad-custom-5e", "blindPlayerChecks");
-
-  // register hooks for Ability, Skill, and Tool checks
-  const hookFn = (_, config) => {
-    if (!game.user.isGM && _blindPlayerChecks) config.rollMode = CONST.DICE_ROLL_MODES.BLIND;
+  const settings = {
+    defeated: {
+      config: {
+        name: "Automatically Mark Defeated",
+        hint: "When an actor drops to 0 HP, toggle the Dead or Unconscious status depending on whether they make death saves or not.",
+        scope: "world",
+        config: true,
+        requiresReload: true,
+        type: Boolean,
+        default: false,
+      },
+      initClass: defeated
+    },
+    folderMacros: {
+      config: {
+        name: "Player Macro Folders",
+        hint: "When players create macros, automatically add them to a folder with their name on it to help keep the macros organized.",
+        scope: "world",
+        config: true,
+        requiresReload: true,
+        type: Boolean,
+        default: false,
+      },
+      initClass: folderMacros
+    },
+    classSpellButtons: {
+      config: {
+        name: "Class Spell Buttons",
+        hint: "Add a button below the classes in the Spells tab to open the Compendium Browser, pre-filtered for that class and level.",
+        scope: "client",
+        config: true,
+        requiresReload: false,
+        type: Boolean,
+        default: false,
+      },
+      initClass: classSpellButtons
+    },
+    optionalBonuses: {
+      config: {
+        name: "Optional Bonuses",
+        hint: "Add checkboxes to the roll config dialogs for optional bonuses (e.g. Sneak Attack and Savage Attacker).",
+        scope: "world",
+        config: true,
+        requiresReload: true,
+        type: Boolean,
+        default: false,
+      },
+      initClass: optionalBonuses
+    },
+    tokenHud: {
+      config: {
+        name: "Customize Token HUD",
+        hint: "Show the names of status effects in the Token HUD.",
+        scope: "client",
+        config: true,
+        requiresReload: false,
+        type: Boolean,
+        default: false,
+      },
+      initClass: tokenHud
+    }
   };
-  Hooks.on("dnd5e.preRollAbilityTest", hookFn);
-  Hooks.on("dnd5e.preRollAbilitySave", hookFn);
-  Hooks.on("dnd5e.preRollSkill", hookFn);
-  Hooks.on("dnd5e.preRollToolCheck", hookFn);
-}
 
-/**
- * Utility functions
- */
+  for (const [key, setting] of Object.entries(settings)) {
+    game.settings.register("kaelad-custom-5e", key, setting.config);
+    if (game.settings.get("kaelad-custom-5e", key)) setting.initClass.init();
+  }
 
-function debugEnabled() {
-  // TODO
-  return true;
-}
-
-function debug(...args) {
-  try {
-    if (debugEnabled()) log(...args);
-  } catch (e) {}
-}
-
-function log(...args) {
-  console.log("Kaelad's Kustomizations |", ...args);
-}
+  // initialize this one separately since it's setting doesn't control the init function
+  blindPlayerChecks.init();
+});
