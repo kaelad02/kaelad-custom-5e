@@ -24,6 +24,18 @@ Hooks.once("init", () => {
       },
       initClass: defeated
     },
+    blindPlayerChecks: {
+      config: {
+        name: "Blind Player Checks",
+        hint: "Force ability checks, saves, skills, and tool rolls by players to be blind rolls.",
+        scope: "world",
+        config: false,
+        requiresReload: false,
+        type: Boolean,
+        default: false,
+      },
+      initClass: blindPlayerChecks
+    },
     folderMacros: {
       config: {
         name: "Player Macro Folders",
@@ -76,9 +88,6 @@ Hooks.once("init", () => {
 
   for (const [key, setting] of Object.entries(settings)) {
     game.settings.register("kaelad-custom-5e", key, setting.config);
-    if (game.settings.get("kaelad-custom-5e", key)) setting.initClass.init();
+    if (!setting.config.requiresReload || game.settings.get("kaelad-custom-5e", key)) setting.initClass.init();
   }
-
-  // initialize this one separately since it's setting doesn't control the init function
-  blindPlayerChecks.init();
 });

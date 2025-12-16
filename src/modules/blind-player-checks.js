@@ -3,15 +3,6 @@
  */
 
 export function init() {
-  game.settings.register("kaelad-custom-5e", "blindPlayerChecks", {
-    name: "Blind Player Checks",
-    hint: "Force ability checks, saves, skills, and tool rolls by players to be blind rolls.",
-    scope: "world",
-    config: false,
-    type: Boolean,
-    default: false,
-  });
-
   // add function to toggle setting
   game.modules.get("kaelad-custom-5e").api.toggleBps = async () => {
     const blind = !game.settings.get("kaelad-custom-5e", "blindPlayerChecks");
