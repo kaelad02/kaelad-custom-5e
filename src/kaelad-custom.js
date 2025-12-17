@@ -5,6 +5,7 @@ import * as classSpellButtons from "./modules/class-spell-buttons.js";
 import * as masteries from "./modules/masteries.js";
 import * as optionalBonuses from "./modules/optional-bonuses.js";
 import * as tokenHud from "./modules/token-hud.js";
+import * as damageTypeAppearance from "./modules/damage-type-appearance.js";
 
 Hooks.once("init", () => {
   console.log("Kaelad's Kustomizations initializing...");
@@ -83,6 +84,18 @@ Hooks.once("init", () => {
         default: false,
       },
       initClass: tokenHud
+    },
+    damageTypeAppearance: {
+      config: {
+        name: "Damage Type Appearance",
+        hint: "Changes the appearance of damage dice based on the damage type (e.g. fire damage is red).",
+        scope: "client",
+        config: true,
+        requiresReload: false,
+        type: Boolean,
+        default: false,
+      },
+      initClass: damageTypeAppearance
     }
   };
 
