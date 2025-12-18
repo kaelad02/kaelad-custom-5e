@@ -88,7 +88,7 @@ Hooks.once("init", () => {
     groupInitiative: {
       config: {
         name: "Group Initiative",
-        hint: "Whether or not to group unlinked tokens in the combat tracker.",
+        hint: "Whether to group unlinked tokens in the combat tracker.",
         scope: "world",
         config: true,
         requiresReload: false,
