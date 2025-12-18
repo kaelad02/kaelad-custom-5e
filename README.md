@@ -33,3 +33,15 @@ Add checkboxes to the roll config dialogs for optional bonuses (e.g. Sneak Attac
 Show the names of status effects in the Token HUD.
 
 _Note:_ This is a client setting that each player can enable for themselves.
+
+## Group Initiative
+
+Whether to group unlinked tokens in the combat tracker.
+
+- Default: the system's default behavior that groups unlinked tokens if they rolled the same initiative
+- Do Not Group: do not group any unlinked tokens
+- Group Same Actor: group unlinked tokens of the same actor, only rolling initiative once for the group
+
+## Damage Type Appearance
+
+Changes the appearance of damage dice based on the damage type (e.g. fire damage is red).
