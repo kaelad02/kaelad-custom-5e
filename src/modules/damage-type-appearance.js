@@ -1,3 +1,8 @@
+/*
+ * Damage Type Appearance
+ * inspired by: https://github.com/foundryvtt/dnd5e/pull/4496/
+ */
+
 export function init() {
   const origEvaluate = dnd5e.dice.DamageRoll.prototype.evaluate;
   dnd5e.dice.DamageRoll.prototype.evaluate = async function(options={}) {
