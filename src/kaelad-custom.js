@@ -5,6 +5,7 @@ import * as classSpellButtons from "./modules/class-spell-buttons.js";
 import * as masteries from "./modules/masteries.js";
 import * as optionalBonuses from "./modules/optional-bonuses.js";
 import * as tokenHud from "./modules/token-hud.js";
+import * as groupInitiative from "./modules/group-initiative.js";
 
 Hooks.once("init", () => {
   console.log("Kaelad's Kustomizations initializing...");
@@ -83,6 +84,23 @@ Hooks.once("init", () => {
         default: false,
       },
       initClass: tokenHud
+    },
+    groupInitiative: {
+      config: {
+        name: "Group Initiative",
+        hint: "Whether to group unlinked tokens in the combat tracker.",
+        scope: "world",
+        config: true,
+        requiresReload: false,
+        type: String,
+        choices: {
+          "default": "Default",
+          "none": "Do Not Group",
+          "actor": "Group Same Actor"
+        },
+        default: "default"
+      },
+      initClass: groupInitiative
     }
   };
 
