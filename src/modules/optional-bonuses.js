@@ -46,6 +46,7 @@ export function init() {
     if (opts.sneakAttack) rollConfig.parts.push("@scale.rogue.sneak-attack");
     if (opts.dreadfulStrikes) rollConfig.parts.push("@scale.fey.dreadful-strike[psychic]");
     if (opts.savageAttacker) rollConfig.parts[0] = `{${rollConfig.parts[0]}, ${rollConfig.parts[0]}}kh`;
+    if (opts.greatWeaponMaster) rollConfig.parts.push("@prof");
     if (opts.blessedStrikesRadiant) rollConfig.parts.push("@scale.cleric.divine-strike[radiant]");
     if (opts.blessedStrikesNecrotic) rollConfig.parts.push("@scale.cleric.divine-strike[necrotic]");
   });
@@ -99,6 +100,13 @@ export function init() {
     if (savageAttacker && item.type === "weapon")
       fields.push(
         new foundry.data.fields.BooleanField({label: savageAttacker.name}, {name: "savageAttacker"})
+      );
+
+    // Great Weapon Master
+    const greatWeaponMaster = getIdentifier("great-weapon-master");
+    if (greatWeaponMaster && item.type === "weapon" && item.system.properties.has("hvy"))
+      fields.push(
+        new foundry.data.fields.BooleanField({label: greatWeaponMaster.name}, {name: "greatWeaponMaster"})
       );
 
     // Blessed Strikes: Divine Strike
