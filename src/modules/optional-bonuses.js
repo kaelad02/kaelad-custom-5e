@@ -145,14 +145,13 @@ export function init() {
 }
 
 function addDieModifier(rollConfig, modifier) {
-  rollConfig.parts = rollConfig.parts.map(part => {
-    const roll = new Roll(part);
-    roll.terms.forEach(term => {
-      if (term instanceof foundry.dice.terms.DiceTerm) term.modifiers.push(modifier);
-    });
-    roll.resetFormula();
-    return roll.formula;
+  // only modify the first part
+  const roll = new Roll(rollConfig.parts[0], rollConfig.data);
+  roll.terms.forEach(term => {
+    if (term instanceof foundry.dice.terms.DiceTerm) term.modifiers.push(modifier);
   });
+  roll.resetFormula();
+  rollConfig.parts[0] = roll.formula;
 }
 
 function addFieldset(fields, elements) {
