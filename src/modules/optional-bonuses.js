@@ -29,7 +29,7 @@ export function init() {
     if (greatWeaponFighting) {
       // melee weapon with Two-Handed or Versatile property, attacking w/ two hands
       if (item.type === "weapon" &&
-        CONFIG.DND5E.weaponTypeMap[item.system.type.value] === "melee" &&
+        (CONFIG.DND5E.weaponTypeMap[item.system.type.value] === "melee" || actor.classes.gunslinger) &&
         ["two", "ver"].some(p => item.system.properties.has(p)) &&
         config.attackMode === "twoHanded") {
         config.autoBonuses.greatWeaponFighting = {label: greatWeaponFighting.name};
