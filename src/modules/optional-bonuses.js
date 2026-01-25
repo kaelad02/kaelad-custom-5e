@@ -2,6 +2,8 @@
  * Optional bonuses
  */
 
+const { BooleanField } = foundry.data.fields;
+
 export function init() {
   // monkeypatch to make criticals support dice pools (e.g. {2d6, 2d6}kh)
   dnd5e.dice.DamageRoll.prototype.configureDamage = funNewConfigureDamage;
@@ -49,6 +51,7 @@ export function init() {
     if (opts.greatWeaponMaster) rollConfig.parts.push("@prof");
     if (opts.blessedStrikesRadiant) rollConfig.parts.push("@scale.cleric.divine-strike[radiant]");
     if (opts.blessedStrikesNecrotic) rollConfig.parts.push("@scale.cleric.divine-strike[necrotic]");
+    if (opts.hex) rollConfig.parts.push("1d6[necrotic]");
   });
 
   Hooks.on("renderDamageRollConfigurationDialog", (app, elements) => {
@@ -64,17 +67,13 @@ export function init() {
     // Elemental Adept: Fire
     const elementalAdeptFire = app.config.autoBonuses.elementalAdeptFire;
     if (elementalAdeptFire) {
-      fields.push(
-        new foundry.data.fields.BooleanField({label: elementalAdeptFire.label}, {name: "elementalAdeptFire"})
-      );
+      fields.push(new BooleanField({label: elementalAdeptFire.label}, {name: "elementalAdeptFire"}));
     }
 
     // Great Weapon Fighting
     const greatWeaponFighting = app.config.autoBonuses.greatWeaponFighting;
     if (greatWeaponFighting) {
-      fields.push(
-        new foundry.data.fields.BooleanField({label: greatWeaponFighting.label}, {name: "greatWeaponFighting"})
-      );
+      fields.push(new BooleanField({label: greatWeaponFighting.label}, {name: "greatWeaponFighting"}));
     }
 
     // Sneak Attack
@@ -83,39 +82,39 @@ export function init() {
       const ranged = activity.actionType === "rwak" || app.config.attackMode?.includes("thrown");
       const finesse = item.system.properties.has("fin");
       if (ranged || finesse)
-        fields.push(
-          new foundry.data.fields.BooleanField({label: sneakAttack.name}, {name: "sneakAttack"})
-        );
+        fields.push(new BooleanField({label: sneakAttack.name}, {name: "sneakAttack"}));
     }
 
     // Dreadful Strikes
     const dreadfulStrikes = getIdentifier("dreadful-strikes");
     if (dreadfulStrikes && item.type === "weapon")
-      fields.push(
-        new foundry.data.fields.BooleanField({label: dreadfulStrikes.name}, {name: "dreadfulStrikes"})
-      );
+      fields.push(new BooleanField({label: dreadfulStrikes.name}, {name: "dreadfulStrikes"}));
 
     // Savage Attacker
     const savageAttacker = getIdentifier("savage-attacker");
     if (savageAttacker && item.type === "weapon")
-      fields.push(
-        new foundry.data.fields.BooleanField({label: savageAttacker.name}, {name: "savageAttacker"})
-      );
+      fields.push(new BooleanField({label: savageAttacker.name}, {name: "savageAttacker"}));
 
     // Great Weapon Master
     const greatWeaponMaster = getIdentifier("great-weapon-master");
     if (greatWeaponMaster && item.type === "weapon" && item.system.properties.has("hvy"))
-      fields.push(
-        new foundry.data.fields.BooleanField({label: greatWeaponMaster.name}, {name: "greatWeaponMaster"})
-      );
+      fields.push(new BooleanField({label: greatWeaponMaster.name}, {name: "greatWeaponMaster"}));
 
     // Blessed Strikes: Divine Strike
     const blessedStrikes = getIdentifier("blessed-strikes-divine-strike");
     if (blessedStrikes && item.type === "weapon")
       fields.push(
-        new foundry.data.fields.BooleanField({label: "Blessed Strikes (Radiant)"}, {name: "blessedStrikesRadiant"}),
-        new foundry.data.fields.BooleanField({label: "Blessed Strikes (Necrotic)"}, {name: "blessedStrikesNecrotic"})
+        new BooleanField({label: "Blessed Strikes (Radiant)"}, {name: "blessedStrikesRadiant"}),
+        new BooleanField({label: "Blessed Strikes (Necrotic)"}, {name: "blessedStrikesNecrotic"})
       );
+
+    // Hex
+    const concentratingEffect = actor.effects.find(e => e.statuses.has("concentrating"));
+    if (concentratingEffect) {
+      const origin = fromUuidSync(concentratingEffect.origin);
+      if (origin?.system?.identifier === "hex")
+        fields.push(new BooleanField({label: origin.name}, {name: "hex"}));
+    }
 
     // add new fieldset for the optional bonuses
     addFieldset(fields, elements);
@@ -137,7 +136,7 @@ export function init() {
     const fields = [];
 
     // Guidance
-    if (app.config.skill) fields.push(new foundry.data.fields.BooleanField({label: "Guidance"}, {name: "guidance"}));
+    if (app.config.skill) fields.push(new BooleanField({label: "Guidance"}, {name: "guidance"}));
 
     // add new fieldset for the optional bonuses
     addFieldset(fields, elements);
