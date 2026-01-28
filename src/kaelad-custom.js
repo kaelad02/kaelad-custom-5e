@@ -7,6 +7,7 @@ import * as optionalBonuses from "./modules/optional-bonuses.js";
 import * as tokenHud from "./modules/token-hud.js";
 import * as groupInitiative from "./modules/group-initiative.js";
 import * as damageTypeAppearance from "./modules/damage-type-appearance.js";
+import * as autoRollDamage from "./modules/auto-roll-damge.js";
 
 Hooks.once("init", () => {
   console.log("Kaelad's Kustomizations initializing...");
@@ -73,6 +74,18 @@ Hooks.once("init", () => {
         default: false,
       },
       initClass: optionalBonuses
+    },
+    autoRollDamage: {
+      config: {
+        name: "Auto Roll Damage",
+        hint: "Automatically trigger the damage roll if the attack roll hits.",
+        scope: "world",
+        config: true,
+        requiresReload: true,
+        type: Boolean,
+        default: false,
+      },
+      initClass: autoRollDamage
     },
     tokenHud: {
       config: {
