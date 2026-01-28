@@ -28,6 +28,10 @@ _Note:_ This is a client setting that each player can enable for themselves.
 
 Add checkboxes to the roll config dialogs for optional bonuses (e.g. Sneak Attack and Savage Attacker).
 
+## Auto Roll Damage
+
+Automatically trigger the damage roll if the attack roll hits.
+
 ## Customize Token HUD
 
 Show the names of status effects in the Token HUD.
