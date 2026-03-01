@@ -52,6 +52,7 @@ export function init() {
     if (opts.blessedStrikesRadiant) rollConfig.parts.push("@scale.cleric.divine-strike[radiant]");
     if (opts.blessedStrikesNecrotic) rollConfig.parts.push("@scale.cleric.divine-strike[necrotic]");
     if (opts.hex) rollConfig.parts.push("1d6[necrotic]");
+    if (opts.frenzy) rollConfig.parts.push("(@scale.barbarian.rage-damage)d6");
   });
 
   Hooks.on("renderDamageRollConfigurationDialog", (app, elements) => {
@@ -115,6 +116,11 @@ export function init() {
       if (origin?.system?.identifier === "hex")
         fields.push(new BooleanField({label: origin.name}, {name: "hex"}));
     }
+
+    // Frenzy (Barbarian, Path of the Berserker)
+    const frenzy = getIdentifier("frenzy");
+    if (frenzy && item.type === "weapon")
+      fields.push(new BooleanField({label: frenzy.name}, {name: "frenzy"}));
 
     // add new fieldset for the optional bonuses
     addFieldset(fields, elements);
