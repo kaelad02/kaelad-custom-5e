@@ -48,4 +48,7 @@ Whether to group unlinked tokens in the combat tracker.
 
 ## Damage Type Appearance
 
+> [!NOTE]
+> Only applies if running Dice So Nice version 5.x or earlier. DSN version 6.0 added the feature itself.
+
 Changes the appearance of damage dice based on the damage type (e.g. fire damage is red).

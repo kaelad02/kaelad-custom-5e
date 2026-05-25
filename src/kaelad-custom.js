@@ -115,8 +115,13 @@ Hooks.once("init", () => {
         default: "default"
       },
       initClass: groupInitiative
-    },
-    damageTypeAppearance: {
+    }
+  };
+
+  // only use if using Dice So Nice pre-6.0
+  const dsn = game.modules.get("dice-so-nice");
+  if (dsn?.active && !foundry.utils.isNewerVersion(dsn?.version, "5.9.99"))
+    settings.damageTypeAppearance = {
       config: {
         name: "Damage Type Appearance",
         hint: "Changes the appearance of damage dice based on the damage type (e.g. fire damage is red).",
@@ -127,8 +132,7 @@ Hooks.once("init", () => {
         default: false,
       },
       initClass: damageTypeAppearance
-    }
-  };
+    };
 
   for (const [key, setting] of Object.entries(settings)) {
     game.settings.register("kaelad-custom-5e", key, setting.config);
