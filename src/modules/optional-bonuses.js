@@ -4,11 +4,16 @@
 
 const { BooleanField } = foundry.data.fields;
 
+let useAdv;
+
 export function init() {
-  // monkeypatch to make criticals support dice pools (e.g. {2d6, 2d6}kh)
-  dnd5e.dice.DamageRoll.prototype.configureDamage = funNewConfigureDamage;
-  // TODO remove when system version updated to 5.2.0
-  dnd5e.documents.ChatMessage5e.prototype._simplifyDamageRoll = newSimplifyDamageRoll;
+  // only monkeypatch if pre-5.3 to make criticals support dice pools (e.g. {2d6, 2d6}kh)
+  useAdv = foundry.utils.isNewerVersion(game.system.version, "5.2.99");
+  if (!useAdv)
+    dnd5e.dice.DamageRoll.prototype.configureDamage = funNewConfigureDamage;
+  // only monkeypatch if pre-5.2
+  if (!foundry.utils.isNewerVersion(game.system.version, "5.1.99"))
+    dnd5e.documents.ChatMessage5e.prototype._simplifyDamageRoll = newSimplifyDamageRoll;
 
   // look for automatic bonuses earlier, before the buildDamageRollConfig hook
   Hooks.on("dnd5e.preRollDamageV2", (config, dialog, message) => {
@@ -47,7 +52,8 @@ export function init() {
     if (dialog.config.autoBonuses.greatWeaponFighting) addDieModifier(rollConfig, "min3");
     if (opts.sneakAttack) rollConfig.parts.push("@scale.rogue.sneak-attack");
     if (opts.dreadfulStrikes) rollConfig.parts.push("@scale.fey.dreadful-strike[psychic]");
-    if (opts.savageAttacker) rollConfig.parts[0] = `{${rollConfig.parts[0]}, ${rollConfig.parts[0]}}kh`;
+    if (opts.savageAttacker && useAdv) rollConfig.parts[0] = `${rollConfig.parts[0]}adv`;
+    else if (opts.savageAttacker) rollConfig.parts[0] = `{${rollConfig.parts[0]}, ${rollConfig.parts[0]}}kh`;
     if (opts.greatWeaponMaster) rollConfig.parts.push("@prof");
     if (opts.blessedStrikesRadiant) rollConfig.parts.push("@scale.cleric.divine-strike[radiant]");
     if (opts.blessedStrikesNecrotic) rollConfig.parts.push("@scale.cleric.divine-strike[necrotic]");
