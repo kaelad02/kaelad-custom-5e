@@ -8,6 +8,7 @@ import * as tokenHud from "./modules/token-hud.js";
 import * as groupInitiative from "./modules/group-initiative.js";
 import * as damageTypeAppearance from "./modules/damage-type-appearance.js";
 import * as autoRollDamage from "./modules/auto-roll-damge.js";
+import * as deleteExpiredEffects from "./modules/delete-expired-effects.js";
 
 Hooks.once("init", () => {
   console.log("Kaelad's Kustomizations initializing...");
@@ -132,6 +133,21 @@ Hooks.once("init", () => {
         default: false,
       },
       initClass: damageTypeAppearance
+    };
+
+  // only turn on Delete Expired Effects if using v14
+  if (game.release.generation >= 14)
+    settings.deleteExpiredEffects = {
+      config: {
+        name: "Delete Expired Effects",
+        hint: "Instead of disabling Active Effects when they expire, delete them.",
+        scope: "world",
+        config: true,
+        requiresReload: true,
+        type: Boolean,
+        default: false,
+      },
+      initClass: deleteExpiredEffects
     };
 
   for (const [key, setting] of Object.entries(settings)) {
