@@ -89,23 +89,23 @@ export function init() {
       const ranged = activity.actionType === "rwak" || app.config.attackMode?.includes("thrown");
       const finesse = item.system.properties.has("fin");
       if (ranged || finesse)
-        fields.push(new BooleanField({label: sneakAttack.name}, {name: "sneakAttack"}));
+        fields.push(new BooleanField({label: sneakAttack.name, hint: "KAELAD-CUSTOM.oncePerTurn"}, {name: "sneakAttack"}));
     }
 
     // Dreadful Strikes
     const dreadfulStrikes = getIdentifier("dreadful-strikes");
     if (dreadfulStrikes && item.type === "weapon")
-      fields.push(new BooleanField({label: dreadfulStrikes.name}, {name: "dreadfulStrikes"}));
+      fields.push(new BooleanField({label: dreadfulStrikes.name, hint: "KAELAD-CUSTOM.oncePerTurn"}, {name: "dreadfulStrikes"}));
 
     // Savage Attacker
     const savageAttacker = getIdentifier("savage-attacker");
     if (savageAttacker && item.type === "weapon")
-      fields.push(new BooleanField({label: savageAttacker.name}, {name: "savageAttacker"}));
+      fields.push(new BooleanField({label: savageAttacker.name, hint: "KAELAD-CUSTOM.oncePerTurn"}, {name: "savageAttacker"}));
 
     // Great Weapon Master
     const greatWeaponMaster = getIdentifier("great-weapon-master");
     if (greatWeaponMaster && item.type === "weapon" && item.system.properties.has("hvy"))
-      fields.push(new BooleanField({label: greatWeaponMaster.name}, {name: "greatWeaponMaster"}));
+      fields.push(new BooleanField({label: greatWeaponMaster.name, hint: "KAELAD-CUSTOM.attackActionYourTurn"}, {name: "greatWeaponMaster"}));
 
     // Blessed Strikes: Divine Strike
     const blessedStrikes = getIdentifier("blessed-strikes-divine-strike");
@@ -126,7 +126,7 @@ export function init() {
     // Frenzy (Barbarian, Path of the Berserker)
     const frenzy = getIdentifier("frenzy");
     if (frenzy && item.type === "weapon")
-      fields.push(new BooleanField({label: frenzy.name}, {name: "frenzy"}));
+      fields.push(new BooleanField({label: frenzy.name, hint: "KAELAD-CUSTOM.firstTargetYourTurn"}, {name: "frenzy"}));
 
     // add new fieldset for the optional bonuses
     addFieldset(fields, elements);
@@ -181,7 +181,7 @@ function addFieldset(fields, elements) {
       if (auto.includes(field.name))
         newFieldset.append(field.toFormGroup({}, {disabled: true, value: true}));
       else
-        newFieldset.append(field.toFormGroup());
+        newFieldset.append(field.toFormGroup({localize: true}));
     });
     // add the new fieldset right before the existing fieldset
     const configFieldset = elements.querySelector('fieldset[data-application-part="configuration"]');

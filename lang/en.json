@@ -1,0 +1,7 @@
+{
+  "KAELAD-CUSTOM": {
+    "oncePerTurn": "1/turn",
+    "attackActionYourTurn": "Attack action on your turn",
+    "firstTargetYourTurn": "First target on your turn"
+  }
+}
