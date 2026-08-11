@@ -120,6 +120,7 @@ jobs:
             README.md                            \
             LICENSE                              \
             css/                                 \
+            lang/                                \
             src/
           # Don't forget to add a backslash at the end of the line for any
           # additional files or directories!
